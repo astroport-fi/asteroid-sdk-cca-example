@@ -15,7 +15,7 @@
     "@types/react-dom": "18.0.9"
   },
   "dependencies": {
-    "@asteroid-protocol/sdk": "^0.1.0",
+    "@asteroid-protocol/sdk": "^0.3.0",
     "@cosmjs/cosmwasm-stargate": "^0.32.2",
     "@cosmjs/stargate": "^0.32.2",
     "@cosmos-kit/react": "^2.10.10",

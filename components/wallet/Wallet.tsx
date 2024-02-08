@@ -5,14 +5,14 @@ import {
   Stack,
   useColorModeValue,
   Link,
-} from "@interchain-ui/react";
-import { WalletStatus } from "cosmos-kit";
-import { useChain } from "@cosmos-kit/react";
-import { getChainLogo } from "@/utils";
-import { CHAIN_NAME, GAS_PRICE } from "@/config";
-import { User } from "./User";
-import { Chain } from "./Chain";
-import { Warning } from "./Warning";
+} from '@interchain-ui/react';
+import { WalletStatus } from 'cosmos-kit';
+import { useChain } from '@cosmos-kit/react';
+import { getChainLogo } from '@/utils';
+import { CHAIN_NAME, GAS_PRICE } from '@/config';
+import { User } from './User';
+import { Chain } from './Chain';
+import { Warning } from './Warning';
 import {
   ButtonConnect,
   ButtonConnected,
@@ -21,13 +21,13 @@ import {
   ButtonError,
   ButtonNotExist,
   ButtonRejected,
-} from "./Connect";
-import { useCallback, useEffect, useState } from "react";
+} from './Connect';
+import { useCallback, useEffect, useState } from 'react';
 import {
   InscriptionOperations,
   SigningStargateClient,
-} from "@asteroid-protocol/sdk";
-import { GasPrice } from "@cosmjs/stargate";
+} from '@asteroid-protocol/sdk';
+import { GasPrice } from '@cosmjs/stargate';
 
 function useClient() {
   const { getRpcEndpoint, getOfflineSignerDirect, isWalletConnected } =
@@ -78,17 +78,17 @@ export function Wallet() {
   }[status] || <ButtonConnect onClick={connect} />;
 
   const [sendingTx, setSendingTx] = useState(false);
-  const [transactionHash, setTransactionHash] = useState("");
-  const [error, setError] = useState("");
+  const [transactionHash, setTransactionHash] = useState('');
+  const [error, setError] = useState('');
   const client = useClient();
 
   const sendTx = useCallback(async () => {
     if (!address) {
-      throw new Error("invalid address");
+      throw new Error('invalid address');
     }
 
     if (!client) {
-      throw new Error("invalid client");
+      throw new Error('invalid client');
     }
 
     setSendingTx(true);
@@ -96,18 +96,18 @@ export function Wallet() {
     // create an inscription
     const operations = new InscriptionOperations(chain.chain_id, address);
 
-    const data = "SOME DATA";
+    const data = 'SOME DATA';
     const txData = operations.inscribe(data, {
-      mime: "text/plain",
-      name: "some text",
-      description: "some text description",
+      mime: 'text/plain',
+      name: 'some text',
+      description: 'some text description',
     });
 
     try {
       const res = await client.signAndBroadcast(
         address,
         txData.messages,
-        "auto",
+        'auto',
         txData.memo,
         undefined,
         txData.nonCriticalExtensionOptions
@@ -123,7 +123,7 @@ export function Wallet() {
 
   return (
     <Box py="$16">
-      <Stack attributes={{ mb: "$12", justifyContent: "center" }}>
+      <Stack attributes={{ mb: '$12', justifyContent: 'center' }}>
         <Chain
           name={chain.pretty_name}
           logo={getChainLogo(chain.chain_name)!}
@@ -132,16 +132,16 @@ export function Wallet() {
       <Stack
         direction="vertical"
         attributes={{
-          mx: "auto",
-          px: "$8",
-          py: "$15",
-          maxWidth: "21rem",
-          borderRadius: "$lg",
-          justifyContent: "center",
-          backgroundColor: useColorModeValue("$white", "$blackAlpha500"),
+          mx: 'auto',
+          px: '$8',
+          py: '$15',
+          maxWidth: '21rem',
+          borderRadius: '$lg',
+          justifyContent: 'center',
+          backgroundColor: useColorModeValue('$white', '$blackAlpha500'),
           boxShadow: useColorModeValue(
-            "0 0 2px #dfdfdf, 0 0 6px -2px #d3d3d3",
-            "0 0 2px #363636, 0 0 8px -2px #4f4f4f"
+            '0 0 2px #dfdfdf, 0 0 6px -2px #d3d3d3',
+            '0 0 2px #363636, 0 0 8px -2px #4f4f4f'
           ),
         }}
       >
@@ -157,27 +157,27 @@ export function Wallet() {
           height="$16"
           overflow="hidden"
           justifyContent="center"
-          px={{ mobile: "$8", tablet: "$10" }}
+          px={{ mobile: '$8', tablet: '$10' }}
         >
           {ConnectButton}
         </Box>
         {isWalletConnected && (
           <>
             <Button isLoading={sendingTx} onClick={sendTx}>
-              Send tx
+              Send Inscription tx
             </Button>
             <Box pt="$8" overflow="hidden" textOverflow="ellipsis">
               <Link
                 color="BlueViolet"
                 target="_blank"
                 href={`${chain.explorers![0].tx_page!.replace(
-                  "${txHash}",
+                  '${txHash}',
                   transactionHash
                 )}`}
               >
                 {transactionHash}
               </Link>
-              {error && <pre style={{ whiteSpace: "pre-wrap" }}>{error}</pre>}
+              {error && <pre style={{ whiteSpace: 'pre-wrap' }}>{error}</pre>}
             </Box>
           </>
         )}
