@@ -7,3 +7,5 @@ First, install the packages and run the development server:
 ```bash
 yarn && yarn dev
 ```
+
+![Asteroid Cosmos App](app.png "Asteroid Cosmos App")
