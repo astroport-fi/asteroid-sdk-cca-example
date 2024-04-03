@@ -9,7 +9,7 @@ import {
 import { WalletStatus } from 'cosmos-kit';
 import { useChain } from '@cosmos-kit/react';
 import { getChainLogo } from '@/utils';
-import { CHAIN_NAME, GAS_PRICE } from '@/config';
+import { CHAIN_NAME, GAS_MULTIPLIER, GAS_PRICE } from '@/config';
 import { User } from './User';
 import { Chain } from './Chain';
 import { Warning } from './Warning';
@@ -30,8 +30,13 @@ import {
 import { GasPrice } from '@cosmjs/stargate';
 
 function useClient() {
-  const { getRpcEndpoint, getOfflineSignerDirect, isWalletConnected } =
-    useChain(CHAIN_NAME);
+  const {
+    getRpcEndpoint,
+    getRestEndpoint,
+    getOfflineSignerDirect,
+    setDefaultSignOptions,
+    isWalletConnected,
+  } = useChain(CHAIN_NAME);
 
   const [client, setClient] = useState<SigningStargateClient>();
   useEffect(() => {
@@ -40,17 +45,25 @@ function useClient() {
     }
     async function createSigningClient() {
       const rpcEndpoint = await getRpcEndpoint();
+      const restEndpoint = await getRestEndpoint();
       const signer = getOfflineSignerDirect();
+      setDefaultSignOptions({ preferNoSetFee: true, preferNoSetMemo: true });
       const gasPrice = GasPrice.fromString(GAS_PRICE);
       const signingClient = await SigningStargateClient.connectWithSigner(
         rpcEndpoint,
         signer,
-        { gasPrice }
+        { gasPrice, simulateEndpoint: restEndpoint as string }
       );
       setClient(signingClient);
     }
     createSigningClient();
-  }, [getRpcEndpoint, getOfflineSignerDirect, isWalletConnected]);
+  }, [
+    getRpcEndpoint,
+    getRestEndpoint,
+    getOfflineSignerDirect,
+    setDefaultSignOptions,
+    isWalletConnected,
+  ]);
 
   return client;
 }
@@ -96,7 +109,7 @@ export function Wallet() {
     // create an inscription
     const operations = new InscriptionOperations(chain.chain_id, address);
 
-    const data = 'SOME DATA';
+    const data = new TextEncoder().encode('SOME DATA');
     const txData = operations.inscribe(data, {
       mime: 'text/plain',
       name: 'some text',
@@ -107,7 +120,7 @@ export function Wallet() {
       const res = await client.signAndBroadcast(
         address,
         txData.messages,
-        'auto',
+        GAS_MULTIPLIER,
         txData.memo,
         undefined,
         txData.nonCriticalExtensionOptions
